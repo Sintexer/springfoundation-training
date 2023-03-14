@@ -1,7 +1,9 @@
-# subtask 3 - Spring Actuator
+# subtask 4 - Spring Profiles
 
-- Switched to springFlux to apply to the requirement 'Expose Default Spring Actuator by configuring SecurityWebFilterChain bean. ', 
-since SecurityWebFilterChain is a webflux class.
-- Added security and user `admin` with password `password`
-- All actuator endpoints, except health, are only accessible after authorization
-- Added new endpoint "random", which returns randomBoolean and randomInt.
+I intentionally didn't create two configuration classes for two data sources beans. Because I believe spring mechanism 
+of defining separate application.yaml file for each profile suits here perfectly.
+
+It is tested be adding `INIT=RUNSCRIPT` to the h2 url. I specified different schema files for QA and DEV profiles. So
+there is no need to write two same configuration classes with different properties.
+
+See DevDataSourceTest and QADataSourceTest.
