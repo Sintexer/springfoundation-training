@@ -1,1 +1,6 @@
-
+springfoundation:
+  db:
+    url: jdbc:h2:mem:springfoundation
+    username: h2
+    password: h2
+#    driverClassName: org.h2.Driver1

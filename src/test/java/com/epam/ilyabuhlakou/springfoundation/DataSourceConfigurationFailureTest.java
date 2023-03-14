@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @Sql("/generate_test_schema.sql")
 @SpringBootTest
@@ -23,39 +24,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
                 "springfoundation.db.url=jdbc:h2:mem:springfoundation-test;DB_CLOSE_ON_EXIT=FALSE",
                 "springfoundation.db.username=h2",
                 "springfoundation.db.password=h2",
-                "springfoundation.db.driverClassName=org.h2.Driver"
+//               if parameter is missing, bean shouldn't be instantiated
+//               "springfoundation.db.driverClassName=org.h2.Driver"
         }
 )
-class DataSourceConfigurationTest {
+class DataSourceConfigurationFailureTest {
 
     @Autowired
     private DataSource dataSource;
 
     @Test
     void dataSourceSaveTest() throws SQLException {
-        String query = "insert into \"test_entities\" (\"id\", \"name\") VALUES(1, 'test1')";
-        Connection con = null;
-        Statement stmt = null;
-        ResultSet rs = null;
-        try {
-            con = dataSource.getConnection();
-            stmt = con.createStatement();
-            int id = stmt.executeUpdate(query);
-            stmt.close();
-
-            stmt = con.createStatement();
-            rs = stmt.executeQuery("select \"id\", \"name\" from \"test_entities\"");
-            rs.next();
-            assertEquals(1, rs.getInt("id"));
-            assertEquals("test1", rs.getString("name"));
-        } finally {
-            try {
-                if (rs != null) rs.close();
-                if (stmt != null) stmt.close();
-                if (con != null) con.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+        // Verify it's not datasource from DataSourceConfiguration
+        assertFalse(dataSource.getConnection().getMetaData().getURL()
+                .contains("jdbc:h2:mem:springfoundation-test;DB_CLOSE_ON_EXIT=FALSE"));
     }
 }
